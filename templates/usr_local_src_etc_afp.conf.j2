@@ -1,8 +1,10 @@
 [Global]
 
-[{{ test_volume_name }}]
-    path = {{ test_volume_path }}
+{% for share in shares_list %}
+[{{ share.name }}]
+    path = {{ share.path }}
 
-[{{ tm_volume_name }}]
-    path = {{ tm_path }}
+{% endfor %}
+[{{ tm_volume.name }}]
+    path = {{ tm_volume.path }}
     time machine = yes

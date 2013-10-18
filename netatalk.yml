@@ -5,29 +5,29 @@
 
   vars:
 
-    tm_volume_name: Time Machine
-    tm_path: /tank/TM
+    shares_list:
+      - { name: 'Shared Data', path: '/tank/Media' }
+      - { name: 'Downloads', path: '/tank/Downloads' }
 
-    test_volume_name: Shared Data
-    test_volume_path: /tank/Media
+    tm_volume: { name: 'Time Machine', path: '/tank/TM'}
 
     ubuntu_packages:
-    - build-essential
-    - libssl-dev
-    - libgcrypt11-dev
-    - libkrb5-dev
-    - libpam0g-dev
-    - libwrap0-dev
-    - libdb-dev
-    - libavahi-client-dev
-    - libacl1-dev
-    - libldap2-dev
-    - libcrack2-dev
-    - systemtap-sdt-dev
-    - libdbus-1-dev
-    - libdbus-glib-1-dev
-    - libglib2.0-dev
-    - avahi-daemon
+      - build-essential
+      - libssl-dev
+      - libgcrypt11-dev
+      - libkrb5-dev
+      - libpam0g-dev
+      - libwrap0-dev
+      - libdb-dev
+      - libavahi-client-dev
+      - libacl1-dev
+      - libldap2-dev
+      - libcrack2-dev
+      - systemtap-sdt-dev
+      - libdbus-1-dev
+      - libdbus-glib-1-dev
+      - libglib2.0-dev
+      - avahi-daemon
 
     packager: apt
     netatalk_version: netatalk-3.0.5
