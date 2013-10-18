@@ -1,0 +1,68 @@
+---
+- hosts: afpservers
+
+  user: root
+
+  vars:
+
+    tm_volume_name: Time Machine
+    tm_path: /tank/TM
+
+    test_volume_name: Shared Data
+    test_volume_path: /tank/Media
+
+    ubuntu_packages:
+    - build-essential
+    - libssl-dev
+    - libgcrypt11-dev
+    - libkrb5-dev
+    - libpam0g-dev
+    - libwrap0-dev
+    - libdb-dev
+    - libavahi-client-dev
+    - libacl1-dev
+    - libldap2-dev
+    - libcrack2-dev
+    - systemtap-sdt-dev
+    - libdbus-1-dev
+    - libdbus-glib-1-dev
+    - libglib2.0-dev
+    - avahi-daemon
+
+    packager: apt
+    netatalk_version: netatalk-3.0.5
+    source_location: /usr/local/src
+
+  tasks:
+    - name: Install packages required for compilation
+      action: $packager pkg={{ item }} state=latest
+      with_items: ubuntu_packages
+    - name: Download {{ netatalk_version }} tarball
+      get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
+    - name: Extract tarball
+      command: /bin/tar xvf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}/.successfully_build_by_ansible
+    - name: Compile and install {{ netatalk_version }}
+      command: "{{ item }}"
+      with_items:
+      - ./configure --with-init-style=debian --with-cracklib --enable-krbV-uam --without-libevent --with-pam-confdir=/etc/pam.d --with-dbus-sysconf-dir=/etc/dbus-1/system.d chdir=/usr/local/src/{{ netatalk_version }} creates=.successfully_build_by_ansible
+      - make chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+      - make install chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+      - touch .successfully_build_by_ansible chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+    - name: Configure AFP Shares
+      template: src=templates/usr_local_src_etc_afp.conf.j2 dest=/usr/local/etc/afp.conf backup=yes
+      notify:
+      - restart netatalk
+    - name: Configure Avahi Service
+      template: src=templates/etc_avahi_services_afpd.service.j2 dest=/etc/avahi/services/afpd.service backup=yes
+      notify:
+      - restart avahi
+    - name: Enable Netatalk Service
+      service: name=netatalk state=started enabled=yes pattern=/usr/local/sbin/netatalk
+    - name: Enable Avahi Service
+      service: name=avahi-daemon state=started enabled=yes
+
+  handlers:
+    - name: restart netatalk
+      service: name=netatalk state=restarted
+    - name: restart avahi
+      service: name=avahi-daemon state=restarted
