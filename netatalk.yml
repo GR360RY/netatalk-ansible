@@ -40,7 +40,7 @@
     - name: Download {{ netatalk_version }} tarball
       get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
     - name: Extract tarball
-      command: /bin/tar xvf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}/.successfully_build_by_ansible
+      command: /bin/tar xf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}/.successfully_build_by_ansible
     - name: Compile and install {{ netatalk_version }}
       command: "{{ item }}"
       with_items:
