@@ -3,8 +3,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "precise64"
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "provisioning/netatalk.yml"
-    ansible.verbose = "v"
+    ansible.playbook = "netatalk.yml"
+    ansible.sudo = true
   end
 
   config.vm.define "ubuntu1204" do |ubuntu1204|
