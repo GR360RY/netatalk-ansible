@@ -1,7 +1,8 @@
 ---
 - hosts: all
 
-  user: root
+  user: vagrant      # User to access your machine over ssh that has sudo permittions
+  sudo: yes
 
   vars:
 
