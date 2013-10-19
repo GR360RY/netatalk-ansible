@@ -57,6 +57,11 @@
       template: src=templates/etc_avahi_services_afpd.service.j2 dest=/etc/avahi/services/afpd.service backup=yes
       notify:
       - restart avahi
+    - name: Verify existance of afp share folders
+      file: path={{ item.path }} state=directory
+      with_items: shares_list
+    - name: Verify existance of Time Machine Volume and set permissions accordingly
+      file: path={{ tm_volume.path }} state=directory mode=774
     - name: Enable Netatalk Service
       service: name=netatalk state=started enabled=yes pattern=/usr/local/sbin/netatalk
     - name: Enable Avahi Service
