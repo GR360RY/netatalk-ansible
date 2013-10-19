@@ -1,5 +1,5 @@
 ---
-- hosts: afpservers
+- hosts: all
 
   user: root
 
