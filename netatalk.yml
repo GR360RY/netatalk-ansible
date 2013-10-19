@@ -36,7 +36,7 @@
 
   tasks:
     - name: Install packages required for compilation
-      action: $packager pkg={{ item }} state=latest
+      action: $packager pkg={{ item }} state=latest update_cache=yes
       with_items: ubuntu_packages
     - name: Download {{ netatalk_version }} tarball
       get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
