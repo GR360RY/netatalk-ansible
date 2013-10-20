@@ -63,7 +63,7 @@
       notify:
       - restart avahi
     - name: Verify existance of afp share folders
-      file: path={{ item.path }} state=directory
+      file: path={{ item.path }} state=directory owner={{ playbook_user.stdout }}
       with_items: shares_list
     - name: Verify existance of Time Machine Volume and set permissions accordingly
       file: path={{ tm_volume.path }} state=directory mode=774
