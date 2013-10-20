@@ -40,6 +40,7 @@
     - name: Get ssh user name
       shell: echo "$SUDO_USER"
       register: playbook_user
+      changed_when: "playbook_user.rc != 0"
     - name: Install packages required for compilation
       action: $packager pkg={{ item }} state=latest update_cache=yes
       with_items: ubuntu_packages
