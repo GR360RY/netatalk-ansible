@@ -37,6 +37,11 @@
     source_location: /usr/local/src
 
   tasks:
+    - name: Get ssh user name
+      sudo: no
+      gather_facts: no
+      shell: echo "$USER"
+      register: ansible_ssh_user
     - name: Install packages required for compilation
       action: $packager pkg={{ item }} state=latest update_cache=yes
       with_items: ubuntu_packages
