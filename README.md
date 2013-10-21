@@ -9,7 +9,7 @@ System Requirements
 * Ubuntu 12.04 Server or Desktop version
 * Ansible installed on target system or on any other OS that has ssh access to targed system.
 
-Step 1: Installing Ansible on traget system
+Step 1: Installing Ansible on target system
 ----------
 
 On Ubuntu run the following commands:
