@@ -6,11 +6,12 @@
 
   vars:
 
-    # Dirs below will be created as root. Please make permission/ownership change to be able to write to those folders.
+    # Dirs below will be created as user running this playbook. Please make permission/ownership change to be able to write to those folders as any other user.
     shares_list:
       - { name: 'Shared Data', path: '/tank/Media' }
       - { name: 'Downloads', path: '/tank/Downloads' }
 
+    # Time machine volume will be owned by root. Directory permissions are 774. Please make permission/ownership change to be able to write to those folders as any other user.
     tm_volume: { name: 'Time Machine', path: '/tank/TM'}
 
     ubuntu_packages:
