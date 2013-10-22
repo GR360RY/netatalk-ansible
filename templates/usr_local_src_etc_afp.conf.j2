@@ -1,5 +1,7 @@
 [Global]
 
+log file = /var/log/netatalk.log
+
 {% for share in shares_list %}
 [{{ share.name }}]
     path = {{ share.path }}
