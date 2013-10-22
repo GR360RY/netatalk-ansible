@@ -2,11 +2,13 @@
 
 log file = /var/log/netatalk.log
 
+{% if share_list is defined %}
 {% for share in shares_list %}
 [{{ share.name }}]
     path = {{ share.path }}
 
 {% endfor %}
+{% endif %}
 [{{ tm_volume.name }}]
     path = {{ tm_volume.path }}
     time machine = yes
