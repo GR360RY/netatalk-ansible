@@ -65,7 +65,7 @@ If there is an issue with bringing up one of the VMs and you receive the next er
 
     fatal: [os_name] => SSH encountered an unknown error during the connection. We recommend you re-run the command using -vvvv, which will enable SSH debugging output to help diagnose the issue
 
-Update your .ssh/config file by adding the next block for localhost:
+Update your ~/.ssh/config file by adding the next block for localhost:
 
     Host 127.0.0.1 localhost
       StrictHostKeyChecking no
