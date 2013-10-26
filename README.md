@@ -1,12 +1,12 @@
 Automated Installation of Netatalk 3.0.X
 ============
 
-This istructions are for Ubuntu 12.04. The procedure for other Ubuntu version or Debian should be similar but not tested yet.
+This ansible playbook will compile latest Netatalk 3.0.X from source and configure afp shares and Time Machine on your system.
 
 System Requirements
 ----------
 
-* Ubuntu 12.04 Server or Desktop version
+* Ubuntu 12.04,12.10,13.04 and 13.10 Server/Desktop versions. Debian should work as well but not tested.
 * Ansible installed on target system or on any other OS that has ssh access to targed system.
 
 Step 1: Installing Ansible on target system
@@ -17,7 +17,7 @@ On Ubuntu run the following commands:
     $ sudo add-apt-repository ppa:rquillo/ansible
     $ sudo apt-get update
     $ sudo apt-get install ansible
-    
+
 Step 2: Modify your user and shares list
 -----------
 
@@ -28,15 +28,15 @@ Step 2: Modify your user and shares list
 
 Step 3: Run ansible
 ------------
-    
+
     cd netatalk-ansible
     ansible-playbook -i ./ansible_hosts netatalk.yml
-    
+
 Testing Setup with Vagrant
 -------------------
 
 Vagrantfile includes the number of Linux Distros. To test specific distribution check the contents of Vagrantfile
-and choose on of the distros:
+and choose one of the distros:
 
     config.vm.define :ubuntu1204 do |ubuntu1204|
       # Ubuntu Server 12.04 amd64 Minimal from files.vagrantup.com
@@ -56,11 +56,11 @@ and choose on of the distros:
         vbox.customize ['modifyvm', :id, '--memory', '1024']
       end
     end
-          
+
 To test specific distribution, say Ubuntu 12.04, run the next command:
 
     vagrant up ubuntu1204
-    
+
 If there is an issue with bringing up one of the VMs and you receive the next error:
 
     fatal: [os_name] => SSH encountered an unknown error during the connection. We recommend you re-run the command using -vvvv, which will enable SSH debugging output to help diagnose the issue
