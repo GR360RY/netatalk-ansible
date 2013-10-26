@@ -2,7 +2,7 @@
 
 log file = /var/log/netatalk.log
 
-{% if share_list is defined %}
+{% if shares_list is defined %}
 {% for share in shares_list %}
 [{{ share.name }}]
     path = {{ share.path }}

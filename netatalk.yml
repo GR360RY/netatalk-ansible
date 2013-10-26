@@ -4,38 +4,9 @@
   user: vagrant      # User to access your machine over ssh that has sudo permittions
   sudo: yes
 
-  vars:
-
-    # Dirs below will be created as user running this playbook. Please make permission/ownership change to be able to write to those folders as any other user.
-    shares_list:
-      - { name: 'Shared Data', path: '/tank/Media' }
-      - { name: 'Downloads', path: '/tank/Downloads' }
-
-    # Time machine volume will be owned by root. Directory permissions are 774. Please make permission/ownership change to be able to write to those folders as any other user.
-    tm_volume: { name: 'Time Machine', path: '/tank/TM'}
-
-    ubuntu_packages:
-      - build-essential
-      - libssl-dev
-      - libgcrypt11-dev
-      - libkrb5-dev
-      - libpam0g-dev
-      - libwrap0-dev
-      - libdb-dev
-      - libavahi-client-dev
-      - libacl1-dev
-      - libldap2-dev
-      - libcrack2-dev
-      - systemtap-sdt-dev
-      - libdbus-1-dev
-      - libdbus-glib-1-dev
-      - libglib2.0-dev
-      - libevent-dev
-      - avahi-daemon
-
-    packager: apt
-    netatalk_version: netatalk-3.0.5
-    source_location: /usr/local/src
+  vars_files:
+    - "vars/user_defined.yml"
+    - "vars/{{ ansible_os_family }}.yml"
 
   tasks:
     - name: Get ssh user name
@@ -43,8 +14,8 @@
       register: playbook_user
       changed_when: "playbook_user.rc != 0"
     - name: Install packages required for compilation
-      action: $packager pkg={{ item }} state=latest update_cache=yes
-      with_items: ubuntu_packages
+      action: $ansible_pkg_mgr pkg={{ item }} state=latest update_cache=yes
+      with_items: os_family_packages
     - name: Download {{ netatalk_version }} tarball
       get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
     - name: Extract tarball
