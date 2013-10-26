@@ -13,8 +13,12 @@
       shell: echo "$SUDO_USER"
       register: playbook_user
       changed_when: "playbook_user.rc != 0"
+    - name: Update package list with apt
+      shell: /usr/bin/apt-get update
+      register: apt_get
+      changed_when: "apt_get.rc != 0"
     - name: Install packages required for compilation
-      action: $ansible_pkg_mgr pkg={{ item }} state=latest update_cache=yes
+      action: $ansible_pkg_mgr pkg={{ item }} state=latest
       with_items: os_family_packages
     - name: Download {{ netatalk_version }} tarball
       get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
@@ -40,7 +44,7 @@
       with_items: shares_list
       when: shares_list is defined
     - name: Verify existance of Time Machine Volume and set permissions accordingly
-      file: path={{ tm_volume.path }} state=directory mode=774
+      file: path={{ tm_volume.path }} state=directory owner={{ playbook_user.stdout }} mode=774
     - name: Enable Netatalk Service
       service: name=netatalk state=started enabled=yes pattern=/usr/local/sbin/netatalk
     - name: Enable Avahi Service

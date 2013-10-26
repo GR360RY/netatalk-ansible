@@ -3,10 +3,15 @@
 netatalk_version: netatalk-3.0.5
 source_location: /usr/local/src
 
-# Dirs below will be created as user running this playbook. Please make permission/ownership change to be able to write to those folders as any other user.
+# Dirs below will be created as user running this playbook. 
+# Make permission/ownership change to be able to write to those folders as any other user.
+# shares_list block can be commented out ( together with below folders ). 
+# In such case only "Time Machine" volume will be configured.
+
 shares_list:
   - { name: 'Shared Data', path: '/tank/Media' }
   - { name: 'Downloads', path: '/tank/Downloads' }
 
-# Time machine volume will be owned by root. Directory permissions are 774. Please make permission/ownership change to be able to write to those folders as any other user.
+# Time machine volume. Directory permissions are 774. 
+# Make permissions/ownership change to be able to write to this folder as any other user.
 tm_volume: { name: 'Time Machine', path: '/tank/TM'}
