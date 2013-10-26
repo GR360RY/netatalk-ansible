@@ -67,7 +67,7 @@
     - name: Verify existance of afp share folders
       file: path={{ item.path }} state=directory owner={{ playbook_user.stdout }}
       with_items: shares_list
-      when: share_list is defined
+      when: shares_list is defined
     - name: Verify existance of Time Machine Volume and set permissions accordingly
       file: path={{ tm_volume.path }} state=directory mode=774
     - name: Enable Netatalk Service
