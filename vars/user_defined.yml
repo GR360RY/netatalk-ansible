@@ -13,5 +13,5 @@ shares_list:
   - { name: 'Downloads', path: '/tank/Downloads' }
 
 # Time machine volume. Directory permissions are 774. 
-# Make permissions/ownership change to be able to write to this folder as any other user.
+# Make permissions/ownership change to be able to write to this folder as any other then sudo_user user.
 tm_volume: { name: 'Time Machine', path: '/tank/TM'}
