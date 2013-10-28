@@ -1,6 +1,6 @@
 # Netatalk version and source location path
 
-netatalk_version: netatalk-3.0.5
+netatalk_version: netatalk-3.0.6
 source_location: /usr/local/src
 
 # Dirs below will be created as user running this playbook. 
