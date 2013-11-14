@@ -14,12 +14,8 @@
       shell: echo "$SUDO_USER"
       register: playbook_user
       changed_when: "playbook_user.rc != 0"
-    - name: Update package list with apt
-      shell: /usr/bin/apt-get update
-      register: apt_get
-      changed_when: "apt_get.rc != 0"
     - name: Install OS Family packages required for compilation
-      action: $ansible_pkg_mgr pkg={{ item }} state=latest
+      action: $ansible_pkg_mgr pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes
       with_items: os_family_packages
     - name: Install Distro specific packages required for compilation
       action: $ansible_pkg_mgr pkg={{ item }} state=latest
