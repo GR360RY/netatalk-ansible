@@ -1,0 +1,16 @@
+- name: Check current hostname
+  shell: /bin/hostname
+  register: current_hostname
+  changed_when: current_hostname.rc != 0
+
+- name: Update /etc/hostname file
+  template: src=etc_hostname.j2 dest=/etc/hostname
+  when: "current_hostname.stdout != vm_hostname"
+
+- name: Update /etc/hosts file
+  template: src=etc_hosts.j2 dest=/etc/hosts
+  when: "current_hostname.stdout != vm_hostname"
+
+- name: Change hostname
+  shell: /bin/hostname {{ vm_hostname }}
+  when: "current_hostname.stdout != vm_hostname"
