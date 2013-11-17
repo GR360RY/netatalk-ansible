@@ -23,7 +23,7 @@ Step 3: Run ansible
 ------------
 
     cd netatalk-ansible
-    ansible-playbook -i ./ansible_hosts netatalk.yml
+    ansible-playbook -k -i ./ansible_hosts netatalk.yml
 
 Testing Setup with Vagrant
 -------------------
