@@ -1,1 +1,2 @@
-#distro_specific_packages:
+distro_specific_packages:
+  - libevent-dev
