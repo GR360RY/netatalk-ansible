@@ -30,7 +30,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   machines.each do |os,param|
     config.vm.define param['define'] do |vbox|
-      # Ubuntu Server 12.04 amd64 Minimal from files.vagrantup.com
       vbox.vm.provision "ansible" do |ansible|
         ansible.playbook = "netatalk.yml"
         ansible.extra_vars = { vm_hostname: param['name'] }
