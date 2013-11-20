@@ -40,7 +40,7 @@
       notify:
       - restart netatalk
     - name: Configure Avahi Service
-      template: src=templates/etc_avahi_services_afpd.service.j2 dest=/etc/avahi/services/afpd.service backup=yes
+    template: src=templates/etc_avahi_services_afpd.service.j2 dest=/etc/avahi/services/afpd.service backup=yes owner=avahi group=root mode=0774
       notify:
       - restart avahi
     - name: Verify existance of afp share folders
