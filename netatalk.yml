@@ -50,7 +50,7 @@
     - name: Verify existance of Time Machine Volume and set permissions accordingly
       file: path={{ tm_volume.path }} state=directory owner={{ playbook_user.stdout }} mode=774
     - name: Enable Netatalk Service
-      service: name=netatalk state=started enabled=yes pattern=/usr/local/sbin/netatalk
+      service: name=netatalk state=started enabled=yes
     - name: Enable Avahi Service
       service: name=avahi-daemon state=started enabled=yes
 
