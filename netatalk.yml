@@ -4,58 +4,114 @@
   user: vagrant      # User to access your machine over ssh that has sudo permittions
   sudo: yes
 
+  vars:
+  
+    # Netatalk version and source location path
+    netatalk_version: netatalk-3.0.6
+    source_location: /usr/local/src
+
+    # Dirs below will be created as user running this playbook. 
+    # Make permission/ownership change to be able to write to those folders as any other user.
+    # shares_list block can be commented out ( together with below folders ). 
+    # In such case only "Time Machine" volume will be configured.
+
+    shares_list:
+      - { name: 'Shared Data', path: '/tank/Media' }
+      - { name: 'Downloads', path: '/tank/Downloads' }
+
+    # Time machine volume. Directory permissions are 774. 
+    # Make permissions/ownership change to be able to write to this folder as any other then sudo_user user.
+    tm_volume: { name: 'Time Machine', path: '/tank/TM'}
+
   vars_files:
-    - "vars/user_defined.yml"
+    # Get OS Family and Distribution specific variables like package lists,
+    # ...
     - "vars/{{ ansible_os_family }}.yml"
     - "vars/{{ ansible_distribution }}.{{ ansible_distribution_version }}.yml"
 
   roles:
-    - { role: vagrant-change-hostname, when: vm_hostname is defined }
+    - { role: vagrant-change-hostname, when: vm_hostname is defined and ansible_hostname != vm_hostname }
 
   tasks:
     - name: Get ssh user name
       shell: echo "$SUDO_USER"
       register: playbook_user
       changed_when: "playbook_user.rc != 0"
+      tags:
+        - install_requirements
+
     - name: Install OS Family packages required for compilation
       action: $ansible_pkg_mgr pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes
       with_items: os_family_packages
+      tags:
+        - install_requirements
+
     - name: Install Distro specific packages required for compilation
       action: $ansible_pkg_mgr pkg={{ item }} state=latest
       with_items: distro_specific_packages
       when: distro_specific_packages is defined
+      tags:
+        - install_requirements
+
     - name: Download {{ netatalk_version }} tarball
       get_url: url=http://prdownloads.sourceforge.net/netatalk/{{ netatalk_version }}.tar.gz?download dest=/tmp/{{ netatalk_version }}.tar.gz
+      tags:
+        - tarball_installation
+
     - name: Extract tarball
       command: /bin/tar xf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}/.successfully_build_by_ansible
+      tags:
+        - tarball_installation
+
     - name: Compile and install {{ netatalk_version }}
       command: "{{ item }}"
       with_items:
-      - ./configure --with-init-style=debian --with-cracklib --enable-krbV-uam --without-libevent --with-pam-confdir=/etc/pam.d --with-dbus-sysconf-dir=/etc/dbus-1/system.d chdir=/usr/local/src/{{ netatalk_version }} creates=.successfully_build_by_ansible
-      - make chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
-      - make install chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
-      - touch .successfully_build_by_ansible chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+        - ./configure --with-init-style=debian --with-cracklib --enable-krbV-uam --without-libevent --with-pam-confdir=/etc/pam.d --with-dbus-sysconf-dir=/etc/dbus-1/system.d chdir=/usr/local/src/{{ netatalk_version }} creates=.successfully_build_by_ansible
+        - make chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+        - make install chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+        - touch .successfully_build_by_ansible chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+      tags:
+        - tarball_installation
+
     - name: Configure AFP Shares
       template: src=templates/usr_local_src_etc_afp.conf.j2 dest=/usr/local/etc/afp.conf backup=yes
       notify:
-      - restart netatalk
+        - restart netatalk
+      tags:
+        - configure_services
+
     - name: Configure Avahi Service
       template: src=templates/etc_avahi_services_afpd.service.j2 dest=/etc/avahi/services/afpd.service backup=yes owner=avahi group=root mode=0774
       notify:
-      - restart avahi
+        - restart avahi
+      tags:
+        - configure_services
+
     - name: Verify existance of afp share folders
       file: path={{ item.path }} state=directory owner={{ playbook_user.stdout }}
       with_items: shares_list
       when: shares_list is defined
+      tags:
+        - create_folders
+
     - name: Verify existance of Time Machine Volume and set permissions accordingly
       file: path={{ tm_volume.path }} state=directory owner={{ playbook_user.stdout }} mode=774
+      tags:
+        - create_folders
+
     - name: Enable Netatalk Service
       service: name=netatalk state=started enabled=yes
+      tags:
+        - start_services
+
     - name: Enable Avahi Service
       service: name=avahi-daemon state=started enabled=yes
+      tags:
+        - start_services
 
   handlers:
     - name: restart netatalk
       service: name=netatalk state=restarted
+
     - name: restart avahi
       service: name=avahi-daemon state=restarted
