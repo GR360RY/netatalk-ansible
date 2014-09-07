@@ -41,13 +41,13 @@
         - install_requirements
 
     - name: Install OS Family packages required for compilation
-      action: $ansible_pkg_mgr pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes
+      action: "{{ ansible_pkg_mgr }} pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes"
       with_items: os_family_packages
       tags:
         - install_requirements
 
     - name: Install Distro specific packages required for compilation
-      action: $ansible_pkg_mgr pkg={{ item }} state=latest
+      action: "{{ ansible_pkg_mgr }} pkg={{ item }} state=latest"
       with_items: distro_specific_packages
       when: distro_specific_packages is defined
       tags:
