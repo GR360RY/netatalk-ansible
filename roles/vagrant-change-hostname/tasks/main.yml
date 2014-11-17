@@ -1,8 +1,0 @@
-- name: Update /etc/hostname file
-  template: src=etc_hostname.j2 dest=/etc/hostname
-
-- name: Update /etc/hosts file
-  template: src=etc_hosts.j2 dest=/etc/hosts
-
-- name: Change hostname
-  shell: /bin/hostname {{ vm_hostname }}

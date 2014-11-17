@@ -32,10 +32,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define param['define'] do |vbox|
       vbox.vm.provision "ansible" do |ansible|
         ansible.playbook = "netatalk.yml"
-        ansible.extra_vars = { vm_hostname: param['name'] }
-        ansible.sudo = true
+        ansible.groups = {"netatalk" => [param['name']]}
       end
       vbox.vm.box = param['box']
+      vbox.vm.hostname = param['name']
       vbox.vm.box_url = param['url']
       vbox.vm.network "public_network"
       vbox.vm.provider :virtualbox do |box|
