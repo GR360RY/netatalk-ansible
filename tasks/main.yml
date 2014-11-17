@@ -5,18 +5,10 @@
   include_vars: "{{ item }}"
   with_items:
     - "{{ ansible_os_family }}.yml"
-    - "{{ ansible_distribution }}.yml"
 
 - name: Install OS Family packages required for compilation
   apt: pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes
   with_items: os_family_packages
-  tags:
-    - install_requirements
-
-- name: Install Distro specific packages required for compilation
-  apt: pkg={{ item }} state=latest cache_valid_time=3600 update_cache=yes
-  with_items: distro_specific_packages
-  when: distro_specific_packages is defined
   tags:
     - install_requirements
 
@@ -29,22 +21,33 @@
     - tarball_installation
 
 - name: Extract tarball
-  command: /bin/tar xf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}/.successfully_build_by_ansible
+  command: /bin/tar xf /tmp/{{ netatalk_version }}.tar.gz -C {{ source_location }} creates={{ source_location }}/{{ netatalk_version }}
   tags:
     - tarball_installation
 
 - name: Run ./configure before compilation
-  command: ./configure --with-init-style=debian-sysv --with-cracklib --enable-krbV-uam --without-libevent --with-pam-confdir=/etc/pam.d --with-dbus-sysconf-dir=/etc/dbus-1/system.d creates=.successfully_build_by_ansible chdir=/usr/local/src/{{ netatalk_version }}
+  command: >
+    chdir={{ source_location }}/{{ netatalk_version }}
+    creates=Makefile
+    ./configure
+        --with-init-style=debian-sysv
+        --without-libevent
+        --without-tdb
+        --with-cracklib
+        --enable-krbV-uam
+        --with-pam-confdir=/etc/pam.d
+        --with-dbus-sysconf-dir=/etc/dbus-1/system.d
+        --with-tracker-pkgconfig-version=1.0
   tags:
     - tarball_installation
 
-- name: Compile Netatalk
-  command: make chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+- name: Run make
+  command: make chdir={{ source_location }}/{{ netatalk_version }}
   tags:
     - tarball_installation
 
 - name: Install Netatalk Binaries
-  command: make install chdir={{ source_location }}/{{ netatalk_version }} creates=.successfully_build_by_ansible
+  command: make install chdir={{ source_location }}/{{ netatalk_version }}
   tags:
     - tarball_installation
 
@@ -75,7 +78,7 @@
     - create_folders
 
 - name: Enable Netatalk Service
-  service: name=netatalk state=started enabled=yes
+  service: name=netatalk state=started enabled=yes pattern=/usr/local/sbin/netatalk
   tags:
     - start_services
 

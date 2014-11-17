@@ -39,6 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vbox.vm.provision "ansible" do |ansible|
         ansible.playbook = "netatalk.yml"
         ansible.groups = {"netatalk" => [param['name']]}
+        # ansible.verbose = 'v'
       end
       vbox.vm.box = param['box']
       vbox.vm.hostname = param['name']

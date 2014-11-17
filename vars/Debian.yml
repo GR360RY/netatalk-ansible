@@ -1,17 +1,24 @@
 os_family_packages:
-  - build-essential
-  - libssl-dev
-  - libgcrypt11-dev
-  - libkrb5-dev
-  - libpam0g-dev
-  - libwrap0-dev
-  - libdb-dev
-  - libavahi-client-dev
-  - libacl1-dev
-  - libldap2-dev
-  - libcrack2-dev
-  - systemtap-sdt-dev
-  - libdbus-1-dev
-  - libdbus-glib-1-dev
-  - libglib2.0-dev
-  - avahi-daemon
+  - build-essential          # Required for any type of compilation
+  - libevent-dev             # (used by netatalk(8))
+  - libssl-dev               # (DHX auth aka DHCAST128)
+  - libgcrypt11-dev          # (DHX2 auth)
+  - libkrb5-dev              # (Kerberos V auth)
+  - libpam0g-dev             # (PAM)
+  - libwrap0-dev             # (TCP Wrapper)
+  - libdb-dev                # (dbd CNID backend)
+  - libtdb-dev               # (tdb CNID backend)
+  - libmysqlclient-dev       # (mysql CNID backend)
+  - libavahi-client-dev      # (Bonjour support)
+  - libacl1-dev              # (ACL support)
+  - libldap2-dev             # (enhanced ACL support)
+  - libcrack2-dev            # (password ckeck)
+  - systemtap-sdt-dev        # (DTrace-compatible)
+  - libdbus-1-dev            # (used by afpstats command)
+  - libdbus-glib-1-dev       # (used by afpstats command)
+  - libglib2.0-dev           # (used by afpstats command)
+  - tracker                  # (used for spotlight indexing)
+  - avahi-daemon             # Adds Zeroconf support
+
+
+
