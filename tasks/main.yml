@@ -25,7 +25,7 @@
   tags:
     - tarball_installation
 
-- name: Run ./configure before compilation
+- name: Generate Makefile ( ./configure )
   command: >
     chdir={{ source_location }}/{{ netatalk_version }}
     creates=Makefile
@@ -38,18 +38,37 @@
         --with-pam-confdir=/etc/pam.d
         --with-dbus-sysconf-dir=/etc/dbus-1/system.d
         --with-tracker-pkgconfig-version=1.0
+  register: config
   tags:
     - tarball_installation
 
-- name: Run make
+- name: ( ./configure ) output
+  debug: var=config.stdout_lines
+  tags:
+    - tarball_installation
+
+- name: Compile Netatalk for source ( make )
   command: make chdir={{ source_location }}/{{ netatalk_version }}
+  register: make
   tags:
     - tarball_installation
 
-- name: Install Netatalk Binaries
+# - name: ( make ) output
+#   debug: var=make.stdout_lines
+#   tags:
+#     - tarball_installation
+
+- name: Install Netatalk Binaries ( make install )
   command: make install chdir={{ source_location }}/{{ netatalk_version }}
+  register: make_install
   tags:
     - tarball_installation
+
+# - name: (make install) output
+#   debug: var=make_install.stdout_lines
+#   tags:
+#     - tarball_installation
+
 
 - name: Configure AFP Shares
   template: src=templates/usr_local_src_etc_afp.conf.j2 dest=/usr/local/etc/afp.conf backup=yes
