@@ -103,5 +103,12 @@
 
 - name: Enable Avahi Service
   service: name=avahi-daemon state=started enabled=yes
+  when: ansible_distribution_version | version_compare('14.10', '<')
+  tags:
+    - start_services
+
+- name: Start Avahi Service for Ubuntu 14.10 ( Workaround for Ansible issue #161. Enabling service brakes this task)
+  service: name=avahi-daemon state=started
+  when: ansible_distribution_version | version_compare('14.10', '>=')
   tags:
     - start_services
